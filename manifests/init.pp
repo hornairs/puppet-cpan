@@ -38,6 +38,23 @@ class cpan () {
         }
       }
     }
+    Darwin: {
+      package { 'perl-modules': ensure => installed }
+      file { [ '/etc/perl', '/etc/perl/CPAN' ]:
+        ensure => directory,
+        owner  => root,
+        group  => wheel,
+        mode   => '0755',
+      }
+      file { '/etc/perl/CPAN/Config.pm':
+        ensure  => present,
+        owner   => root,
+        group   => wheel,
+        mode    => '0644',
+        source  => 'puppet:///modules/cpan/Config.pm',
+        require => File['/etc/perl/CPAN']
+      }
+    }
     default: {
       fail("Module ${module_name} is not supported on ${::operatingsystem}")
     }
